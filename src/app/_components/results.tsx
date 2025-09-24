@@ -72,7 +72,7 @@ const NotesGrid = memo(function NotesGridComponent({
   notes: NoteMeta[];
 }) {
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+    <div className="flex flex-wrap items-center justify-center gap-6">
       {notes.map((note, index) => (
         <NoteCard index={index} key={note.name} note={note} />
       ))}
@@ -89,7 +89,7 @@ const NoteCard = memo(function NoteCardComponent({
 }) {
   return (
     <Link
-      className="group flex w-full flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all duration-100 hover:scale-105 hover:shadow-lg"
+      className="group flex w-30 flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all duration-100 hover:scale-105 hover:shadow-lg"
       href={note.link}
       rel="noopener noreferrer"
       style={{ animationDelay: `${index * 100}ms` }}
@@ -97,13 +97,14 @@ const NoteCard = memo(function NoteCardComponent({
     >
       <Image
         alt={note.name ?? ""}
-        className="h-20 w-full object-cover"
-        height={40}
-        src={note.image_url || "https://placehold.co/200x200"}
-        width={40}
+        className="h-30 w-30 object-cover"
+        height={100}
+        quality={100}
+        src={note.image_url ?? "https://placehold.co/40x40"}
+        width={100}
       />
       <div className="p-3">
-        <h3 className="line-clamp-2 font-medium text-foreground text-sm">
+        <h3 className="line-clamp-1 font-medium text-foreground text-sm">
           {note.name}
         </h3>
         <p className="mt-1 text-muted-foreground text-xs">Fragrantica</p>
