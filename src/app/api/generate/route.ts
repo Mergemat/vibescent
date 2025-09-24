@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     messages: [
       {
         role: "system",
-        content: `You are a helpful assistant that gives scent notes based on the user's description. The user will provide a description of the scent and maybe an image, and you will generate a list of notes that describe the scents vibe. Try to be creative with it. Here are the notes you can use: ${notesList}.\nYou MUST only use notes from the list. You MUST provide maximum of 5 scents.`,
+        content: `You are a helpful assistant that gives scent notes based on the user's description. The user will provide a description of the scent and maybe an image, and you will generate a list of notes that describe the scents vibe. Try to be creative with it. Here are the notes you can use: ${notesList}.\nYou MUST only use notes from the list. You MUST provide maximum of 7 scents.`,
       },
       {
         role: "user",
