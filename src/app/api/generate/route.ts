@@ -1,8 +1,10 @@
-import { readFileSync } from "node:fs";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { streamObject } from "ai";
 import z from "zod";
 import { env } from "~/env";
+import notesJson from "../../../../fragrantica_notes.json" with {
+  type: "json",
+};
 
 type Note = {
   name: string;
@@ -19,9 +21,7 @@ export async function POST(req: Request) {
     image?: string;
   };
 
-  const notes = JSON.parse(
-    readFileSync("./fragrantica_notes.json", "utf-8")
-  ) as Note[];
+  const notes = notesJson as Note[];
   const notesList = notes.map((note) => note.name);
 
   const openrouter = createOpenRouter({
