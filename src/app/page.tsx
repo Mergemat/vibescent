@@ -131,7 +131,7 @@ export default function HomePage() {
       }
     }
     return acc;
-  }, [object]);
+  }, [object, NOTES_INDEX]);
 
   const isBusy = isLoading || isUploading;
 
