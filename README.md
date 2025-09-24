@@ -1,29 +1,77 @@
-# Create T3 App
+# Vibescent
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+AI-powered fragrance note generator that creates scent profiles based on your descriptions and reference images.
 
-## What's next? How do I make an app with this?
+## Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- Generate fragrance notes using GPT-4.1
+- Upload reference images for visual inspiration
+- Real-time streaming results
+- Responsive design with Tailwind CSS
+- Type-safe with TypeScript and Zod
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Tech Stack
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- **Frontend**: Next.js 15, React 19, Tailwind CSS
+- **Backend**: Convex for data storage
+- **AI**: OpenRouter API with GPT-4.1
+- **Forms**: React Hook Form with Zod validation
+- **Linting**: Biome (Ultracite)
 
-## Learn More
+## Installation
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/vibescent.git
+   cd vibescent
+   ```
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+2. Install dependencies:
+   ```bash
+   bun install
+   ```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env.local
+   ```
+   Add your API keys:
+   - `OPENROUTER_API_KEY`: Your OpenRouter API key
+   - `CONVEX_URL`: Your Convex deployment URL
 
-## How do I deploy this?
+4. Set up Convex:
+   ```bash
+   npx convex dev
+   ```
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+5. Run the development server:
+   ```bash
+   bun run dev
+   ```
+
+## Usage
+
+1. Enter a scent description in the prompt field
+2. Optionally upload a reference image
+3. Click "Generate Notes" to create your fragrance profile
+4. View the generated notes with images and links
+
+## Scripts
+
+- `bun run dev` - Start development server
+- `bun run build` - Build for production
+- `bun run check` - Run Biome linter
+- `bun run typecheck` - Run TypeScript type checking
+
+## Deployment
+
+Deploy to Vercel with Convex integration:
+
+1. Push to GitHub
+2. Connect to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy
+
+## License
+
+MIT
