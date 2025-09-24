@@ -42,7 +42,7 @@ export const PromptField = memo(function PromptFieldComponent({
               />
             </FormControl>
             <FormDescription className="text-sm">
-              Tip: paste text or an image directly into the text area.
+              (You can leave this blank btw)
             </FormDescription>
             <FormMessage />
           </FormItem>

@@ -13,7 +13,6 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as generate from "../generate.js";
 import type * as http from "../http.js";
 import type * as requests from "../requests.js";
 import type * as router from "../router.js";
@@ -27,7 +26,6 @@ import type * as router from "../router.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  generate: typeof generate;
   http: typeof http;
   requests: typeof requests;
   router: typeof router;
