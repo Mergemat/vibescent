@@ -44,7 +44,7 @@ export const ReferenceImageSection = memo(
               <FileDropzone disabled={disabled} onDropFiles={handleDropFiles} />
             </FormControl>
             <FormDescription className="text-sm">
-              Upload an image to help identify the scent profile.
+              Drop a moodboard or a meme. Idc really.
             </FormDescription>
             <FormMessage />
           </FormItem>
