@@ -1,10 +1,9 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { streamObject } from "ai";
 import z from "zod";
 import { env } from "~/env";
-import notesJson from "../../../../fragrantica_notes.json" with {
-  type: "json",
-};
 
 type Note = {
   name: string;
@@ -21,7 +20,9 @@ export async function POST(req: Request) {
     image?: string;
   };
 
-  const notes = notesJson as Note[];
+  const filePath = path.join(process.cwd(), "fragrantica_notes.json");
+  const fileContents = readFileSync(filePath, "utf-8");
+  const notes = JSON.parse(fileContents) as Note[];
   const notesList = notes.map((note) => note.name);
 
   const openrouter = createOpenRouter({

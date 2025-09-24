@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Form } from "~/components/ui/form";
 import { api } from "../../convex/_generated/api";
-import notesJson from "../../fragrantica_notes.json" with { type: "json" };
 import { HeaderBlock } from "./_components/header-block";
 import { LoadingOverlay } from "./_components/loading-overlay";
 import { PromptField } from "./_components/prompt-field";
@@ -17,16 +16,22 @@ import { ResultsSection } from "./_components/results";
 import { SubmitButton } from "./_components/submit-button";
 import type { NoteMeta } from "./_components/types";
 
-const NOTES_INDEX = new Map<string, NoteMeta>(
-  (notesJson as NoteMeta[]).map((n) => [n.name, n])
-);
-
 const formSchema = z.object({
   prompt: z.string(),
   image: z.file().optional(),
 });
 
 export default function HomePage() {
+  const [notesJson, setNotes] = useState<NoteMeta[]>([]);
+
+  useEffect(() => {
+    async function loadNotes() {
+      const res = await fetch("/api/notes");
+      const data = (await res.json()) as NoteMeta[];
+      setNotes(data);
+    }
+    loadNotes();
+  }, []);
   const { object, submit, isLoading, error } = useObject({
     api: "/api/generate",
     schema: z.object({
@@ -106,6 +111,14 @@ export default function HomePage() {
       }
     },
     [setPrompt, setImage]
+  );
+
+  const NOTES_INDEX = useMemo(
+    () =>
+      new Map<string, NoteMeta>(
+        (notesJson as NoteMeta[]).map((n) => [n.name, n])
+      ),
+    [notesJson]
   );
 
   const notes = useMemo<NoteMeta[]>(() => {
