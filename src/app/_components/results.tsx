@@ -89,7 +89,7 @@ const NoteCard = memo(function NoteCardComponent({
 }) {
   return (
     <Link
-      className="group flex w-30 flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all duration-100 hover:scale-105 hover:shadow-lg"
+      className="group flex w-24 flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all duration-100 hover:scale-105 hover:shadow-lg md:w-30"
       href={note.link}
       rel="noopener noreferrer"
       style={{ animationDelay: `${index * 100}ms` }}
@@ -97,17 +97,16 @@ const NoteCard = memo(function NoteCardComponent({
     >
       <Image
         alt={note.name ?? ""}
-        className="h-30 w-30 object-cover"
+        className="h-24 w-24 object-cover md:h-30 md:w-30"
         height={100}
         quality={100}
         src={note.image_url ?? "https://placehold.co/40x40"}
         width={100}
       />
       <div className="p-3">
-        <h3 className="line-clamp-1 font-medium text-foreground text-sm">
+        <h3 className="line-clamp-1 font-medium text-foreground text-xs md:text-sm">
           {note.name}
         </h3>
-        <p className="mt-1 text-muted-foreground text-xs">Fragrantica</p>
       </div>
     </Link>
   );
