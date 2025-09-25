@@ -1,11 +1,6 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
+import { getNotesMeta } from "~/lib/notes-data";
 
-export function GET() {
-  const filePath = path.join(process.cwd(), "fragrantica_notes.json");
-  const fileContents = readFileSync(filePath, "utf-8");
-  const notes = JSON.parse(fileContents);
-
-  // Optional: filter, paginate, or slice big data here
+export async function GET() {
+  const notes = await getNotesMeta();
   return Response.json(notes);
 }
