@@ -1,28 +1,42 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { streamObject } from "ai";
 import z from "zod";
 import { env } from "~/env";
+import { getNotesMeta } from "~/lib/notes-data";
 
 type Note = {
   name: string;
-  link: string;
-  image_url: string;
 };
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
-export async function POST(req: Request) {
-  const { prompt, image } = (await req.json()) as {
-    prompt: string;
-    image?: string;
-  };
+const requestSchema = z.object({
+  prompt: z.string().optional(),
+  image: z
+    .string()
+    .refine((value) => {
+      try {
+        new URL(value);
+        return true;
+      } catch (_error) {
+        return false;
+      }
+    }, "Invalid image URL provided.")
+    .optional(),
+});
 
-  const filePath = path.join(process.cwd(), "fragrantica_notes.json");
-  const fileContents = readFileSync(filePath, "utf-8");
-  const notes = JSON.parse(fileContents) as Note[];
+export async function POST(req: Request) {
+  const payload = await req.json();
+  const { prompt, image } = requestSchema.parse(payload);
+
+  if (!(prompt || image)) {
+    return new Response("Provide a prompt or image before submitting.", {
+      status: 400,
+    });
+  }
+
+  const notes = (await getNotesMeta()) as Note[];
   const notesList = notes.map((note) => note.name);
 
   const openrouter = createOpenRouter({
@@ -59,10 +73,6 @@ export async function POST(req: Request) {
               ] as const)
             : []),
         ],
-      },
-      {
-        role: "user",
-        content: prompt,
       },
     ],
   });

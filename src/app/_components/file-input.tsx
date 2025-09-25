@@ -1,4 +1,5 @@
 import { UploadCloud } from "lucide-react";
+import { useId } from "react";
 import { useDropzone } from "react-dropzone";
 import { cn } from "~/lib/utils";
 
@@ -8,16 +9,21 @@ type FileDropzoneProps = {
 };
 
 export function FileDropzone({ onDropFiles, disabled }: FileDropzoneProps) {
+  const inputId = useId();
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { "image/*": [] },
     multiple: false,
     disabled,
-
     onDrop: (acceptedFiles) => {
       if (acceptedFiles[0]) {
         onDropFiles(acceptedFiles[0]);
       }
     },
+  });
+
+  const rootProps = getRootProps({
+    role: undefined,
+    tabIndex: undefined,
   });
 
   let stateClass = "";
@@ -30,21 +36,26 @@ export function FileDropzone({ onDropFiles, disabled }: FileDropzoneProps) {
   }
 
   return (
-    <div
-      {...getRootProps()}
-      aria-disabled={disabled}
+    <button
+      {...rootProps}
+      aria-labelledby={`${inputId}-label`}
       className={cn(
-        "flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed p-6 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "flex flex-col items-center justify-center rounded-lg border border-dashed p-6 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         stateClass
       )}
+      disabled={disabled}
+      type="button"
     >
-      <input {...getInputProps()} />
+      <input {...getInputProps({ id: inputId })} />
+      <span className="sr-only" id={`${inputId}-label`}>
+        Upload reference image
+      </span>
       <UploadCloud
         aria-hidden="true"
         className="mb-2 h-5 w-5 text-muted-foreground"
       />
       <p className="font-medium">Drop an image here</p>
       <p className="text-muted-foreground text-xs">or click to browse</p>
-    </div>
+    </button>
   );
 }
