@@ -3,23 +3,28 @@
 import { X } from "lucide-react";
 import Image from "next/image";
 import { memo, useCallback } from "react";
+import type { UseFormReturn } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import {
   FormControl,
   FormDescription,
+  FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
 import { cn } from "~/lib/utils";
 import { FileDropzone } from "./file-input";
+import type { GenerateFormValues } from "./types";
 
 export const ReferenceImageSection = memo(
   function ReferenceImageSectionComponent({
+    form,
     imageUrl,
     disabled,
     onSetImage,
   }: {
+    form: UseFormReturn<GenerateFormValues>;
     imageUrl?: string;
     disabled: boolean;
     onSetImage: (file: File | undefined) => void;
@@ -33,21 +38,30 @@ export const ReferenceImageSection = memo(
     return (
       <div className="space-y-3">
         <div>
-          <FormItem>
-            <FormLabel className="font-medium text-base">
-              Reference Image{" "}
-              <span className="font-normal text-muted-foreground">
-                (Optional)
-              </span>
-            </FormLabel>
-            <FormControl>
-              <FileDropzone disabled={disabled} onDropFiles={handleDropFiles} />
-            </FormControl>
-            <FormDescription className="text-sm">
-              Drop a moodboard or a meme. Idc really.
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-medium text-base">
+                  Reference Image{" "}
+                  <span className="font-normal text-muted-foreground">
+                    (Optional)
+                  </span>
+                </FormLabel>
+                <FormControl>
+                  <FileDropzone
+                    disabled={disabled}
+                    onDropFiles={handleDropFiles}
+                  />
+                </FormControl>
+                <FormDescription className="text-sm">
+                  Drop a moodboard or a meme. Idc really.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <SelectedImage
           image={imageUrl}
