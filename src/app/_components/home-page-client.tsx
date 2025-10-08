@@ -19,7 +19,7 @@ import type { NoteMeta } from "./types";
 
 const formSchema = z.object({
   prompt: z.string(),
-  image: z.file().optional(),
+  image: z.file().max(5_000_000, "Image size must be less than 5MB").optional(),
 });
 
 const createNotesIndex = (list: NoteMeta[]): Map<string, NoteMeta> =>
@@ -51,13 +51,38 @@ export function HomePageClient({ notes }: { notes: NoteMeta[] }) {
     },
   });
 
+  const uploadImageAndSubmit = useCallback(
+    async ({ file, promptValue }: { file: File; promptValue: string }) => {
+      setIsUploading(true);
+      form.clearErrors("image");
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const uploadedImageUrl = await saveImage({ image: arrayBuffer });
+        submit({ prompt: promptValue, image: uploadedImageUrl ?? "" });
+      } catch (uploadError) {
+        const message =
+          uploadError instanceof Error
+            ? uploadError.message
+            : "Failed to upload image.";
+        form.setError("image", { type: "manual", message });
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [form, saveImage, submit]
+  );
+
   const onSubmit = useCallback(
     async (data: z.infer<typeof formSchema>) => {
       if (isUploading) {
         return;
       }
 
-      if (!(data.prompt.trim() || data.image)) {
+      const trimmedPrompt = data.prompt.trim();
+      const image = data.image;
+
+      if (!(trimmedPrompt || image)) {
         form.setError("prompt", {
           type: "manual",
           message: "Enter a prompt or upload an image before submitting.",
@@ -65,52 +90,35 @@ export function HomePageClient({ notes }: { notes: NoteMeta[] }) {
         return;
       }
 
-      if (data.image) {
-        setIsUploading(true);
-        form.clearErrors("image");
+      form.clearErrors("prompt");
 
-        try {
-          const uploadedImageUrl = await saveImage({
-            image: await data.image.arrayBuffer(),
-          });
-          submit({ prompt: data.prompt, image: uploadedImageUrl ?? "" });
-        } catch (uploadError) {
-          const message =
-            uploadError instanceof Error
-              ? uploadError.message
-              : "Failed to upload image.";
-          form.setError("image", { type: "manual", message });
-          return;
-        } finally {
-          setIsUploading(false);
-        }
-
+      if (image) {
+        await uploadImageAndSubmit({ file: image, promptValue: trimmedPrompt });
         return;
       }
 
-      form.clearErrors("prompt");
-      submit({ prompt: data.prompt });
+      submit({ prompt: trimmedPrompt });
     },
-    [form, isUploading, saveImage, submit]
+    [form, isUploading, submit, uploadImageAndSubmit]
   );
 
-  const image = form.watch("image");
+  const selectedImage = form.watch("image");
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (!image) {
+    if (!selectedImage) {
       setImageUrl(undefined);
       return;
     }
 
-    const file = image as File;
+    const file = selectedImage as File;
     const url = URL.createObjectURL(file);
     setImageUrl(url);
 
     return () => {
       URL.revokeObjectURL(url);
     };
-  }, [image]);
+  }, [selectedImage]);
 
   const setPrompt = useCallback(
     (value: string) => form.setValue("prompt", value),
@@ -177,6 +185,7 @@ export function HomePageClient({ notes }: { notes: NoteMeta[] }) {
 
           <ReferenceImageSection
             disabled={isBusy}
+            form={form}
             imageUrl={imageUrl}
             onSetImage={setImage}
           />
