@@ -2,7 +2,7 @@
 
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAction } from "convex/react";
+import { useMutation } from "convex/react";
 import type { ClipboardEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -41,7 +41,8 @@ export function HomePageClient({ notes }: { notes: NoteMeta[] }) {
 
   const [isUploading, setIsUploading] = useState(false);
 
-  const saveImage = useAction(api.requests.saveImage);
+  const generateUploadUrl = useMutation(api.requests.generateUploadUrl);
+  const getImageUrl = useMutation(api.requests.getImageUrl);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,8 +58,14 @@ export function HomePageClient({ notes }: { notes: NoteMeta[] }) {
       form.clearErrors("image");
 
       try {
-        const arrayBuffer = await file.arrayBuffer();
-        const uploadedImageUrl = await saveImage({ image: arrayBuffer });
+        const postUrl = await generateUploadUrl();
+        const result = await fetch(postUrl, {
+          method: "POST",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
+        const { storageId } = await result.json();
+        const uploadedImageUrl = await getImageUrl({ storageId });
         submit({ prompt: promptValue, image: uploadedImageUrl ?? "" });
       } catch (uploadError) {
         const message =
@@ -70,7 +77,7 @@ export function HomePageClient({ notes }: { notes: NoteMeta[] }) {
         setIsUploading(false);
       }
     },
-    [form, saveImage, submit]
+    [form, generateUploadUrl, getImageUrl, submit]
   );
 
   const onSubmit = useCallback(
