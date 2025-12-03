@@ -99,7 +99,7 @@ const NoteCard = memo(function NoteCardComponent({
         alt={note.name ?? ""}
         className="h-24 w-24 object-cover md:h-30 md:w-30"
         height={100}
-        quality={100}
+        quality={75}
         src={note.image_url ?? "https://placehold.co/40x40"}
         width={100}
       />
